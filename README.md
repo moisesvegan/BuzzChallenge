@@ -1,9 +1,30 @@
-# Getting Started with Create React App
+# Aplicación de Gestión de Tickets
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Descripción
 
-## Available Scripts
+Esta es una aplicación de gestión de tickets que permite a los usuarios crear, editar y eliminar tickets. Los tickets se pueden clasificar por dificultad y estado. La aplicación proporciona una interfaz intuitiva para realizar búsquedas y filtrar tickets según criterios específicos.
 
+### Características
+
+- **Creación de Tickets**: Los usuarios pueden crear nuevos tickets proporcionando información como nombre, correo electrónico, dificultad y descripción.
+- **Edición de Tickets**: Los tickets existentes se pueden editar para actualizar su información.
+- **Eliminación de Tickets**: Los usuarios pueden eliminar tickets que ya no son necesarios.
+- **Filtrado y Búsqueda**: Los tickets pueden filtrarse por estado (Nuevo, Iniciado, Cerrado) y por dificultad (Baja, Media, Alta). También se puede buscar por nombre, ID o fecha de creación.
+- **Visualización de GIFs**: La aplicación muestra un GIF relacionado con la dificultad del ticket seleccionado.
+
+## Tecnologías Utilizadas
+
+- **React**: Para la creación de la interfaz de usuario.
+- **Chakra UI**: Para el diseño y estilo de la interfaz.
+- **Redux**: Para la gestión del estado de la aplicación.
+- **JavaScript ES6**: Para la lógica de la aplicación.
+
+## Requisitos Previos
+
+Asegúrate de tener instalado lo siguiente en tu máquina:
+
+- [Node.js](https://nodejs.org/) (versión 12 o superior)
+- [npm](https://www.npmjs.com/) (incluido con Node.js)
 In the project directory, you can run:
 
 ### `npm start`
