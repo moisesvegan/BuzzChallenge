@@ -1,110 +1,102 @@
-import React, { useState } from 'react';
-import { Box, Text, Select, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@chakra-ui/react';
+import React, { useState, useMemo } from 'react';
+import { Box, Text, Select, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Image, Flex } from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addTicket } from '../store/ticketsSlice'; 
+import { addTicket } from '../store/ticketsSlice';
 import Sidebar from '../components/Sidebar/Sidebar';
 import TicketItem from '../components/TicketItem/TicketItem';
-import TicketForm from '../components/TicketForm/TicketForm'; 
+import TicketForm from '../components/TicketForm/TicketForm';
+import ticketIcon from '../assets/icons/ticket-icon.png';
+import { FiSearch, FiFilter } from 'react-icons/fi';
 
 const Tickets = () => {
   const tickets = useSelector((state) => state.tickets);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('Todos');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isOpen, setIsOpen] = useState(false); 
-  const [currentTicket, setCurrentTicket] = useState(null); 
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentTicket, setCurrentTicket] = useState(null);
   const username = localStorage.getItem('user') || 'Invitado';
 
-  const filteredTickets = tickets.filter(ticket => {
-    const matchesFilter = 
-      filter === 'Todos' || 
-      ticket.status === filter; // Cambiado de difficulty a status
-    const matchesSearch = 
-      ticket.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      ticket.id.toString().includes(searchTerm) || 
-      new Date(ticket.createdAt).toLocaleDateString().includes(searchTerm);
-
-    return matchesFilter && matchesSearch;
-  });
+  const filteredTickets = useMemo(() => {
+    return tickets.filter(ticket => {
+      const matchesFilter = filter === 'Todos' || ticket.status === filter || ticket.difficulty === filter;
+      const matchesSearch = ticket.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.id.toString().includes(searchTerm) ||
+        new Date(ticket.createdAt).toLocaleDateString().includes(searchTerm);
+      return matchesFilter && matchesSearch;
+    });
+  }, [tickets, filter, searchTerm]);
 
   const onOpenModal = () => setIsOpen(true);
   const onCloseModal = () => {
-    setCurrentTicket(null); 
+    setCurrentTicket(null);
     setIsOpen(false);
   };
 
   const handleAddTicket = (newTicket) => {
     dispatch(addTicket(newTicket));
-    onCloseModal(); 
+    onCloseModal();
   };
 
   const handleEditTicket = (ticket) => {
-    setCurrentTicket(ticket); 
-    onOpenModal(); 
+    setCurrentTicket(ticket);
+    onOpenModal();
   };
 
   return (
     <Box display="flex">
       <Sidebar username={username} onOpenModal={onOpenModal} />
-      <Box  
-        marginLeft="300px" 
-        padding="0 130px"
-        flex="1" 
-        height="100vh" 
-        backgroundColor="#f0f0f0"
-      >
-        <Text fontSize="2xl" fontWeight="bold" marginBottom="4">Lista de Tickets</Text>
-        
-        <Box display="flex" flexDirection="row" gap={10}>
-          <Input
-            width="25%"
-            backgroundColor="white"
-            placeholder="Buscar por nombre, ID o fecha"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            marginBottom="4"
-          />
-          <Select 
-            width="25%" 
-            backgroundColor="white" 
-            value={filter} 
-            onChange={(e) => setFilter(e.target.value)} 
-            marginBottom="4"
-          >
-            <option value="Todos">Todos</option>
-            <option value="Nuevo">Nuevo</option>
-            <option value="Iniciados">Iniciado</option>
-            <option value="Cerrado">Cerrado</option>
-            <option value="Baja">Baja</option>
-            <option value="Media">Media</option>
-            <option value="Alta">Alta</option>
-          </Select>
+      <Box ml="300px" p="0 50px" flex="1" h="100vh" bg="#f9f9f9">
+        <Box display="flex" alignItems="center" my={6}>
+          <Image src={ticketIcon} alt="Ticket Icon" boxSize="40px" mr={4} />
+          <Text fontSize="2xl" fontWeight="bold">MIS TICKETS</Text>
+        </Box>
+
+        <Box display="flex" flexDirection="row" gap={4} mb={6}>
+          <Flex alignItems="center" bg="white" borderRadius="md" p={2} w="50%">
+            <FiSearch size={20} color="#A0AEC0" />
+            <Input
+              placeholder="Buscar por nombre, ID o fecha"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              border="none"
+              ml={2}
+            />
+          </Flex>
+
+          <Flex alignItems="center" bg="white" borderRadius="md" p={2} w="25%">
+            <FiFilter size={20} color="#A0AEC0" />
+            <Select border="none" value={filter} onChange={(e) => setFilter(e.target.value)} ml={2}>
+              <option value="Todos">Todos</option>
+              <option value="Nuevo">Nuevo</option>
+              <option value="Iniciado">Iniciado</option>
+              <option value="Cerrado">Cerrado</option>
+              <option value="Baja">Baja</option>
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+            </Select>
+          </Flex>
         </Box>
 
         {filteredTickets.length === 0 ? (
           <Text>No hay tickets disponibles.</Text>
         ) : (
           filteredTickets.map((ticket) => (
-            <TicketItem 
-              key={ticket.id}  
-              ticket={ticket} 
-              onEdit={handleEditTicket} 
-            />
+            <TicketItem key={ticket.id} ticket={ticket} onEdit={handleEditTicket} />
           ))
         )}
       </Box>
 
       <Modal isOpen={isOpen} onClose={onCloseModal}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{currentTicket ? 'Editar Ticket' : 'Crear Nuevo Ticket'}</ModalHeader>
+        <ModalContent maxW="130vh" h="60vh">
+          <ModalHeader display="flex" alignItems="center">
+            <Image src={ticketIcon} alt="Ticket Icon" boxSize="20px" mr={2} />
+            {currentTicket ? 'Editar Ticket' : 'Crear Nuevo Ticket'}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <TicketForm 
-              onClose={onCloseModal} 
-              onAddTicket={handleAddTicket} 
-              ticket={currentTicket} 
-            />
+            <TicketForm onClose={onCloseModal} ticket={currentTicket} />
           </ModalBody>
         </ModalContent>
       </Modal>

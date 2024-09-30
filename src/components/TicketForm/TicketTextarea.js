@@ -1,13 +1,15 @@
+// TicketTextarea.js
 import { Textarea } from '@chakra-ui/react';
 
-const TicketTextarea = ({ name, placeholder, value, onChange, required = false }) => (
+const TicketTextarea = ({ name, placeholder, value, onChange, required = false, isReadOnly }) => (
   <Textarea
     name={name}
     placeholder={placeholder}
     value={value}
     onChange={onChange}
-    marginBottom="2"
-    required={required}
+    isRequired={required}
+    isReadOnly={isReadOnly}
+    mb="2"
   />
 );
 

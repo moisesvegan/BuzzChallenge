@@ -1,12 +1,14 @@
+// TicketSelect.js
 import { Select } from '@chakra-ui/react';
 
-const TicketSelect = ({ name, placeholder, value, onChange, options }) => (
+const TicketSelect = ({ name, placeholder, value, onChange, options, isReadOnly }) => (
   <Select
     name={name}
     placeholder={placeholder}
     value={value}
     onChange={onChange}
-    marginBottom="2"
+    isDisabled={isReadOnly}
+    mb="2"
   >
     {options.map((option) => (
       <option key={option} value={option}>

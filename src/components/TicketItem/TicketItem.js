@@ -1,103 +1,63 @@
+// TicketItem.js
 import React from 'react';
 import { Box, Text, Button, Tag, Image } from '@chakra-ui/react';
-
-// Utilidad para formatear la fecha de creación
-const formatDate = (createdAt) => {
-  const date = new Date(createdAt);
-  return date.toLocaleString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
+import { FiEdit } from 'react-icons/fi';
 
 const TicketItem = ({ ticket, onDelete, onEdit }) => {
   const { id, name, status, difficulty, createdAt, gif } = ticket;
-  const formattedDate = formatDate(createdAt);
 
-  // Función para asignar color basado en la dificultad
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'Baja':
-        return 'green';
-      case 'Media':
-        return 'yellow';
-      case 'Alta':
-        return 'red';
-      default:
-        return 'gray';
-    }
-  };
-
-  // Función para asignar color basado en el estado
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Nuevo':
-        return 'blue';
-      case 'Iniciado':
-        return 'orange';
-      case 'Cerrado':
-        return 'green';
-      default:
-        return 'gray';
-    }
+  const getColor = (type, value) => {
+    const colors = {
+      difficulty: { Baja: 'green', Media: 'yellow', Alta: 'red' },
+      status: { Nuevo: 'blue', Iniciado: 'orange', Cerrado: 'green' },
+    };
+    return colors[type][value] || 'gray';
   };
 
   return (
-    <Box 
+    <Box
       display="flex" 
       justifyContent="space-between" 
-      padding="4" 
+      p="16px" 
       borderWidth="1px" 
       borderRadius="lg" 
-      marginBottom="4"
+      mb="16px"
       alignItems="center"
-      backgroundColor="white"
-      fontSize="20px"
+      bg="white"
+      boxShadow="md"
     >
-      <Text fontSize="20px">{id}</Text>
+      <Text fontSize="lg" fontWeight="bold" color="gray.700">{id}</Text>
 
-      {/* Línea vertical separadora */}
-      <Box height="40px" width="1px" backgroundColor="gray.300" mx={2} />
+      <Box height="40px" width="1px" bg="gray.300" mx={2} />
 
-      <Text fontSize="20px">{name}</Text>
-
-      {/* Línea vertical separadora */}
-      <Box height="40px" width="1px" backgroundColor="gray.300" mx={2} />
-
-      <Text fontSize="20px">
-        <Tag colorScheme={getStatusColor(status)} padding="5px 20px" borderRadius="full" fontSize="20px">
-          {status}
-        </Tag>
+      <Text fontSize="lg" fontWeight="medium" isTruncated maxW="200px" color="gray.700">
+        {name}
       </Text>
 
-      <Text fontSize="20px">
-        <Tag colorScheme={getDifficultyColor(difficulty)} padding="5px 20px" borderRadius="full" fontSize="20px" marginLeft="2">
-          {difficulty}
-        </Tag>
-      </Text>
+      <Box height="40px" width="1px" bg="gray.300" mx={2} />
 
-      {gif && (
-        <Image src={gif} alt="Ticket GIF" boxSize="50px" marginLeft="2" />
-      )}
+      <Tag colorScheme={getColor('status', status)} px="20px" borderRadius="full">
+        {status}
+      </Tag>
 
-      {/* Línea vertical separadora */}
-      <Box height="40px" width="1px" backgroundColor="gray.300" mx={2} />
+      <Tag colorScheme={getColor('difficulty', difficulty)} px="20px" borderRadius="full" ml={2}>
+        {difficulty}
+      </Tag>
 
-      <Text fontSize="20px">{formattedDate}</Text>
+      {gif && <Image src={gif} alt="Ticket GIF" boxSize="50px" ml={2} />}
 
-      {/* Botón para editar, solo si la función onEdit está disponible */}
+      <Box height="40px" width="1px" bg="gray.300" mx={2} />
+
+      <Text fontSize="lg" color="gray.500">{new Date(createdAt).toLocaleDateString()}</Text>
+
       {onEdit && (
-        <Button onClick={() => onEdit(ticket)} colorScheme="blue" size="sm" marginLeft="2">
+        <Button onClick={() => onEdit(ticket)} variant="outline" leftIcon={<FiEdit />} size="sm">
           Editar
         </Button>
       )}
 
-      {/* Botón para eliminar, solo si la función onDelete está disponible */}
       {onDelete && (
-        <Button onClick={() => onDelete(ticket.id)} colorScheme="red" size="sm" marginLeft="2">
+        <Button onClick={() => onDelete(ticket.id)} colorScheme="red" size="sm" ml={2}>
           Eliminar
         </Button>
       )}
